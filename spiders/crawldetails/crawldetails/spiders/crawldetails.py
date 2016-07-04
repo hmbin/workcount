@@ -32,7 +32,7 @@ class KeysSpider(scrapy.Spider):
 
     def parse_json_link(self,response):
         kd = response.meta['kd']
-        totalPageCount = json.loads(response.body_as_unicode())["content"]['totalPageCount']
+        totalPageCount = json.loads(response.body_as_unicode())["content"]['pageSize']
         for page in range((int(totalPageCount))):
             yield scrapy.Request("{}&pn={}".format(response.url,page+1),callback=self.parse_id,meta={'kd':kd},dont_filter=True)
 
@@ -40,7 +40,7 @@ class KeysSpider(scrapy.Spider):
         kd = response.meta['kd']
         detail_url = "http://www.lagou.com/jobs/{}.html"
         json_response = json.loads(response.body_as_unicode())
-        for id in json_response["content"]['result']:
+        for id in json_response["content"]['positionResult']['result']:
             # item["link"].append(id['positionId'])
             yield scrapy.Request(detail_url.format(id['positionId']),callback=self.parse_detail,meta={'kd':kd},dont_filter=True)
 
